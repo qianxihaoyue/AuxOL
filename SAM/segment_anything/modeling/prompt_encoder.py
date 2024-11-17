@@ -194,10 +194,13 @@ class PositionEmbeddingRandom(nn.Module):
     def forward(self, size: Tuple[int, int]) -> torch.Tensor:
         """Generate positional encoding for a grid of the specified size."""
         h, w = size
+        # print(h,w)
         device: Any = self.positional_encoding_gaussian_matrix.device
-        grid = torch.ones((h, w), device=device, dtype=torch.float32)
-        y_embed = grid.cumsum(dim=0) - 0.5
-        x_embed = grid.cumsum(dim=1) - 0.5
+        # grid = torch.ones((h, w), device=device, dtype=torch.float32)
+        # y_embed = grid.cumsum(dim=0) - 0.5
+        # x_embed = grid.cumsum(dim=1) - 0.5
+        x_embed= torch.range(0.5,64,1,dtype=torch.float32,device=device).repeat(h, 1)
+        y_embed= torch.range(0.5,64,1,dtype=torch.float32,device=device).repeat(h, 1).transpose(0, 1)
         y_embed = y_embed / h
         x_embed = x_embed / w
 

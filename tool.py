@@ -12,7 +12,19 @@ from skimage import  morphology
 import  copy
 
 
-def  calc_predict_bbox(predict):
+
+def structure_loss(pred, mask):
+    weit = 1 + 5 * torch.abs(F.avg_pool2d(mask, kernel_size=31, stride=1, padding=15) - mask)
+    wbce = F.binary_cross_entropy_with_logits(pred, mask, reduce='none')
+    wbce = (weit * wbce).sum(dim=(2, 3)) / weit.sum(dim=(2, 3))
+    pred = torch.sigmoid(pred)
+    inter = ((pred * mask) * weit).sum(dim=(2, 3))
+    union = ((pred + mask) * weit).sum(dim=(2, 3))
+    wiou = 1 - (inter + 1) / (union - inter + 1)
+    return (wbce + wiou).mean()
+
+
+def  calc_predict_information(predict):
     assert type(predict) == np.ndarray
     retval, labels, stats, centroids = cv2.connectedComponentsWithStats(predict, connectivity=8)
     # retval连通域个数   #labels连通图  #stats连通域大小和范围  #连通域质心
@@ -20,24 +32,62 @@ def  calc_predict_bbox(predict):
     ind = stats[:, 4].argsort()
     stats = stats[ind][:-1]
     centroids=centroids[ind][:-1]
+    h,w=predict.shape
     predict=predict//255
     predict=predict[:,:,None]   #维度扩充 [h,w,1]  0-1  ndarray
+    ###################################################################
+
+    ######preporcessing##########################
+    final_index = []
+    for i in range(retval):
+        x1, y1, x2, y2 = stats[i][0], stats[i][1], stats[i][0] + stats[i][2], stats[i][1] + stats[i][3]
+        if x2 - x1 >= 16 and y2 - y1 >= 16:
+            final_index.append(i)
+        else:
+            pass
+            # print(f"position:{x1}, {y1}, {x2}, {y2}")
+    #################################################
+    retval = len(final_index)
+    stats = stats[final_index]
+    centroids = centroids[final_index]
+    #################################################
+    if retval == 0:
+        # print(f"the number of retval is {retval} ")
+        retval+=1
+        stats=np.array([[0,0,w,h]])
+        centroids=np.array([[w//2,h//2]])
+
     return retval,labels,stats,centroids,predict
 
 
 
 
-def  calc_bbox(mask_rpath):
+def  calc_information(mask_rpath):
     mask = cv2.imread(mask_rpath, 0)
     _, mask = cv2.threshold(mask, 127, 255, cv2.THRESH_BINARY)
     retval, labels, stats, centroids = cv2.connectedComponentsWithStats(mask, connectivity=8)
     # retval连通域个数   #labels连通图  #stats连通域大小和范围  #连通域质心
+
+    #####################去掉最大外接框##########################
     retval = retval - 1
-    ind = stats[:, 4].argsort()
-    stats = stats[ind][:-1]
-    centroids=centroids[ind][:-1]
-    mask=mask/255
-    mask=mask[:,:,None]
+    index = stats[:, 4].argsort()        #sort from small to large  according to the areas and return index
+    stats = stats[index][:-1]
+    centroids=centroids[index][:-1]
+    ##########################################################
+
+    ######preporcessing##########################
+    final_index=[]
+    for i in range(retval):
+        x1, y1, x2, y2 = stats[i][0], stats[i][1], stats[i][0] + stats[i][2], stats[i][1] + stats[i][3]
+        if x2 - x1 >= 16 and y2 - y1 >= 16:
+            final_index.append(i)
+   #################################################
+    retval=len(final_index)
+    stats=stats[final_index]
+    centroids = centroids[final_index]
+    #################################################
+    mask=mask//255
+    mask=mask[:,:,None]    # [h,w,1]   0-1  ndarray
     return retval,labels,stats,centroids,mask
 
 def load_model(args):
