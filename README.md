@@ -45,5 +45,10 @@ The code is licensed under the MIT license.
 # Citing  AuxOL
 If you use AuxOL in your research, please use the following BibTeX entry.
 ```
-
+@article{huang2024improving,
+  title={On-the-Fly Improving Segment Anything for Medical Image Segmentation using Auxiliary Online Learning},
+  author={Huang, Tianyu and Zhou, Tao and Xie, Weidi and Wang, Shuo and Dou, Qi and Zhang, Yizhe},
+  journal={arXiv preprint arXiv:2406.00956},
+  year={2024}
+}
 ```
