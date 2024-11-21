@@ -17,6 +17,9 @@ def  calc_dice(pred,gt):
     return (2. * intersection + smooth) / (pred.sum() + gt.sum() + smooth)
 
 def calc_hf(pred,gt):
+    pred=pred.squeeze()
+    gt=gt.squeeze()
+    # print(pred.shape,gt.shape)
     h,w=pred.shape
     pred=torch.from_numpy(pred)
     gt=torch.from_numpy(gt)

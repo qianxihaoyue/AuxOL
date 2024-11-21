@@ -9,7 +9,7 @@ import numpy as np
 import torch
 from torch import optim
 from pathlib import Path
-from metric import calc_dice
+from metric import calc_dice,calc_hf
 from tqdm import tqdm
 from torchvision  import  transforms
 from Nets.Unet.unet_model import UNet
@@ -29,8 +29,6 @@ def predict_with_prompt(args, logger, directory=None,parts=None):
     net.cuda()
 
     optimizer = optim.AdamW(net.parameters(), lr=args.lr, weight_decay=0.0005)
-    # logger.info(optimizer)
-
     batch_images = []
     batch_masks = []
     alphas=[]
@@ -39,7 +37,7 @@ def predict_with_prompt(args, logger, directory=None,parts=None):
     mean_alphas=[]
     last = {"part": [], "sample_names": [], "final_dice": []}
 
-    if args.calc_raw_dice:   #calculate the dice between  SAM predict  and mask
+    if args.calc_raw_dice:
         raw_dices=[]
 
     if args.dice_percent <1:
@@ -63,6 +61,10 @@ def predict_with_prompt(args, logger, directory=None,parts=None):
         if  args.dice_percent <1:
             count=0
 
+        if  args.calc_new:
+            new_raw_dice_list=[]
+            new_raw_hf_list=[]
+
         for index, sample_name in tqdm(enumerate(sample_names_list), desc=f"{part}"):
             flag= index%args.interval==0       #the ratio of using mask   1/1   1/2  1/4   default 1/1
             retval, _, stats,centroids, mask = calc_information(os.path.join(mask_path, sample_name))   # [h,w,1]   0-1   ndarray
@@ -72,7 +74,7 @@ def predict_with_prompt(args, logger, directory=None,parts=None):
             predictor.set_image(image)
             pre_merge = np.zeros(image.shape, dtype=np.float32)  # [h,w,3]  0-1  ndarray
             # pre_count=np.zeros(image.shape, dtype=np.float32)
-            if args.dice_percent  <1 or args.calc_raw_dice :
+            if args.dice_percent <1 or args.calc_raw_dice :
                 raw_merge = np.zeros((image.shape[0],image.shape[1],1), dtype=np.float32)  # [h,w,1]  0-1  ndarray
 
             crop_image_queue = []  # [h,w,3]    [0,255]  nadarray
@@ -89,6 +91,27 @@ def predict_with_prompt(args, logger, directory=None,parts=None):
             for i in range(retval):
                 if args.prompt=="bbox":
                     x1, y1, x2, y2 = stats[i][0], stats[i][1], stats[i][0] + stats[i][2], stats[i][1] + stats[i][3]
+                    tiny_width =x2-x1
+                    tiny_height=y2-y1
+                    if args.prompt_noise>0 and args.prompt_noise_type=="lrud":
+                        print(f"{args.prompt_noise_type}")
+                        seed1=random.random()
+                        if seed1>=0 and seed1<0.5:
+                            x1 = max(0, int(x1 - args.prompt_noise * tiny_width))
+                            x2 = x1 + tiny_width
+                        else:
+                            x2 = min(image_w, int(x2 + args.prompt_noise * tiny_width))
+                            x1 = x2 - tiny_width
+
+                        seed2=random.random()
+                        if seed2>=0 and seed2<0.5:
+                            y1 = max(0, int(y1 - args.prompt_noise * tiny_height))
+                            y2 = y1 + tiny_height
+                        else:
+                            y2 = min(image_h, int(y2 + args.prompt_noise * tiny_height))
+                            y1 = y2 - tiny_height
+
+
                     input_bbox = np.array([[x1, y1, x2, y2]])
                     pred_raw, _, _ = predictor.predict(box=input_bbox, multimask_output=False, return_logits=True)
                     pred = torch.from_numpy(pred_raw).sigmoid().permute(1, 2, 0).numpy().astype(np.float32)  # [0~1]  ndarray
@@ -125,10 +148,14 @@ def predict_with_prompt(args, logger, directory=None,parts=None):
                     _, _, pred_stats, _, _ = calc_predict_information(temp_full)
 
                     x1, y1, x2, y2 = pred_stats[0][0], pred_stats[0][1], pred_stats[0][0] + pred_stats[0][2], pred_stats[0][1] + pred_stats[0][3]
-                    x1 = max(0, int(x1 - (x2 - x1) * 0.1))
-                    x2 = min(image_w, int(x2 + (x2 - x1) * 0.1))
-                    y1 = max(0, int(y1 - (y2 - y1) * 0.1))
-                    y2 = min(image_h, int(y2 + (y2 - y1) * 0.1))
+                    tiny_width=x2-x1
+                    tiny_height=y2-y1
+                    x1 = max(0, int(x1 - tiny_width* 0.1))
+                    x2 = min(image_w, int(x2 + tiny_width* 0.1))
+                    y1 = max(0, int(y1 - tiny_height * 0.1))
+                    y2 = min(image_h, int(y2 + tiny_height* 0.1))
+
+
 
                     # crop_mask_queue.append(mask[y1:y2, x1:x2])
                     # crop_image_queue.append(image[y1:y2, x1:x2])
@@ -141,7 +168,7 @@ def predict_with_prompt(args, logger, directory=None,parts=None):
                 if args.dice_percent < 1 or args.calc_raw_dice:
                     raw_merge += pred
                 ########################################################
-                if args.noise > 0 and args.noise_type == "dilation" and random.random()<=args.noise_ratio:
+                if args.noise > 0 and args.noise_type == "dilation" :
                     print("add noise dilation")
                     kernel_size = int(min(y2 - y1, x2 - x1) * args.noise)
                     kernel = np.ones((kernel_size, kernel_size), np.uint8)
@@ -151,7 +178,7 @@ def predict_with_prompt(args, logger, directory=None,parts=None):
                     noise_sample_merged = np.concatenate([mask[y1:y2, x1:x2, 0], noise_mask], axis=1)
                     cv2.imwrite(os.path.join(noise_path, sample_name), noise_sample_merged * 255)
                     ################################################################################################
-                elif args.noise>0 and args.noise_type == "erosion" and random.random()<=args.noise_ratio:
+                elif args.noise>0 and args.noise_type == "erosion" :
                     print("add noise erosion")
                     kernel_size = int(min(y2 - y1, x2 - x1) * args.noise)
                     kernel = np.ones((kernel_size, kernel_size), np.uint8)
@@ -161,7 +188,7 @@ def predict_with_prompt(args, logger, directory=None,parts=None):
                     noise_sample_merged = np.concatenate([mask[y1:y2, x1:x2, 0], noise_mask], axis=1)
                     cv2.imwrite(os.path.join(noise_path, sample_name), noise_sample_merged * 255)
                     ################################################################################################
-                elif args.noise>0 and args.noise_type == "both" and random.random()<=args.noise_ratio:
+                elif args.noise>0 and args.noise_type == "both" :
                     print("add noise erosion or dilation")
                     kernel_size = int(min(y2 - y1, x2 - x1) * args.noise)
                     kernel = np.ones((kernel_size, kernel_size), np.uint8)
@@ -188,6 +215,10 @@ def predict_with_prompt(args, logger, directory=None,parts=None):
             if args.calc_raw_dice:
                 raw_dice=calc_dice(binary(raw_merge),mask)
                 raw_dices.append(round(raw_dice,4))
+                if args.calc_new:
+                    raw_hf=calc_hf(binary(raw_merge),mask)
+                    new_raw_dice_list.append(round(raw_dice,4))
+                    new_raw_hf_list.append(round(raw_hf,2))
 
 
             if args.dice_percent <1:
@@ -198,18 +229,28 @@ def predict_with_prompt(args, logger, directory=None,parts=None):
             for i in range(len(crop_image_queue)):
                 crop_image = crop_image_queue[i]
                 if args.four_channel:
-                    # print("use four channel")
                     fourth_channel = crop_predict_queue[i].astype(np.uint8) * 255
                     crop_image = np.concatenate([crop_image, fourth_channel], axis=2)
                 height = crop_image.shape[0]
                 width = crop_image.shape[1]
 
                 optimizer.zero_grad()
-                trans = transforms.Compose([transforms.ToPILImage(),
-                                            transforms.Resize((args.crop_image_size, args.crop_image_size)),
-                                            transforms.ToTensor()
-                                            ])
-                # crop_image = cv2.resize(crop_image, (args.crop_image_size, args.crop_image_size))
+                if  args.four_channel:
+                    # trans = transforms.Compose([transforms.ToPILImage(),
+                    #                             transforms.Resize((args.crop_image_size, args.crop_image_size)),
+                    #                             transforms.ToTensor(),
+                    #                             transforms.Normalize([0, 0, 0,0.5], [1,1,1,1])
+                    #                             ])
+                    trans = transforms.Compose([transforms.ToPILImage(),
+                                                transforms.Resize((args.crop_image_size, args.crop_image_size)),
+                                                transforms.ToTensor()
+                                                ])
+                else:
+                    trans = transforms.Compose([transforms.ToPILImage(),
+                                                transforms.Resize((args.crop_image_size, args.crop_image_size)),
+                                                transforms.ToTensor()
+                                                ])
+
                 crop_image = trans(crop_image).unsqueeze(0).cuda()
 
                 crop_mask=cv2.resize(crop_mask_queue[i],(args.crop_image_size, args.crop_image_size))
@@ -322,12 +363,15 @@ def predict_with_prompt(args, logger, directory=None,parts=None):
             # pre_merge=pre_merge/pre_count
             pre_merge=binary(pre_merge)
 
-
             final_dice=calc_dice(pre_merge[:,:,0],mask[:,:,0])
             last["part"].append(part)
             last["sample_names"].append(sample_name)
             last["final_dice"].append( round(final_dice,4))
             cv2.imwrite(os.path.join(predict_path, sample_name), pre_merge*255)
+
+        if args.calc_new:
+            logger.info(f"new_raw_dice_{part},{round(sum(new_raw_dice_list)/len(new_raw_dice_list),4)}")
+            logger.info(f"new_raw_hf_{part},{round(sum(new_raw_hf_list)/len(new_raw_hf_list),2)}")
 
         if args.dice_percent <1:
             gt_percent_queue.append(count/len(sample_names_list))
@@ -358,21 +402,28 @@ if __name__ == "__main__":
     parser.add_argument("--calc_raw_dice",type=bool,default=True,help="calculate the dice between SAM predict and mask ")
     parser.add_argument("--seed", type=int, default=1234)
     parser.add_argument("--lr", type=float, default=0.0005)
-    parser.add_argument("--crop_image_size", type=int, default=128)
+    parser.add_argument("--crop_image_size", type=int, default=128,help="resize crop image size ")
     parser.add_argument("--alpha_percent", type=float, default=1, help="0~1")
     parser.add_argument("--bilinear",action="store_true")
+    parser.add_argument("--calc_new", type=bool, default=False)
 
     parser.add_argument("--interval",type=int,default=1)
     parser.add_argument("--dice_percent",type=float,default=1,help="when  dice < dice_percent then using mask [0.85,0.9]")
     parser.add_argument("--nums", type=int, default=32, help="queue length")
-    parser.add_argument("--noise", type=float, default=0)
-    parser.add_argument("--noise_type",type=str,default="dilation")
+
     parser.add_argument("--model_name", default="MedSAM_bbox", type=str,help="choose from  SAM,MedSAM_bbox,MedSAM_point")
     parser.add_argument("--directory", type=str, default="Polyp")
     parser.add_argument("--parts", type=str,nargs="+",default=["CVC-ClinicDB","CVC-ColonDB","ETIS-LaribPolypDB", "Kvasir", "CVC-300"])
     parser.add_argument("--prompt",type=str,default="bbox",help="choose from  [point|bbox]")
     parser.add_argument("--four_channel",type=int,default=1,help="1 stand for use 0 stand for not use" )
-    parser.add_argument("--noise_ratio",type=float,default=1,help="ratio of noise")
+
+    #HE noise
+    parser.add_argument("--noise", type=float, default=0,help="0.05|0.1|0")
+    parser.add_argument("--noise_type", type=str, default="dilation",help="dilatin|erosion|both")
+    #prompt noise
+    parser.add_argument("--prompt_noise",type=float,default=0,help="0.05|0")
+    parser.add_argument("--prompt_noise_type",type=str,default="none",help="none|lrud")
+
 
     # directory = "BUSI"
     # "benign","malignant"
@@ -395,7 +446,7 @@ if __name__ == "__main__":
     # torch.backends.cudnn.deterministic = True
 
     exp_path=f"exp_{datetime.datetime.now().strftime('%Y_%m_%d_%H_%M_%S')}"
-    args.result_path = f"{args.result_path}/{exp_path}_dir[{args.directory}]_mode[{args.model_name}]_queue[{args.nums}]_prompt[{args.prompt}]_dicePercent[{args.dice_percent}]_interval[{args.interval}]_fourChannel[{args.four_channel}]_bilinear[{args.bilinear}]_{args.noise_type}_noise[{args.noise}]_noiseRatio[{args.noise_ratio}]"
+    args.result_path = f"{args.result_path}/{exp_path}_dir[{args.directory}]_mode[{args.model_name}]_queue[{args.nums}]_prompt[{args.prompt}]_dicePercent[{args.dice_percent}]_interval[{args.interval}]_fourChannel[{args.four_channel}]_bilinear[{args.bilinear}]_{args.noise_type}_noise[{args.noise}]_promptNoise[{args.prompt_noise}]_promptNoiseType[{args.prompt_noise_type}]"
     Path(args.result_path).mkdir(parents=True, exist_ok=True)
     logger = get_logger(log_path=f"{args.result_path}/log.txt")
     print_args(args,logger)

@@ -95,6 +95,10 @@ def load_model(args):
         from SAM.segment_anything import  sam_model_registry,SamPredictor
         sam = sam_model_registry["vit_h"](checkpoint="./checkpoints/sam_vit_h_4b8939.pth").cuda()
         predictor = SamPredictor(sam)
+    elif args.model_name=="SAM-B":
+        from SAM.segment_anything import sam_model_registry, SamPredictor
+        sam = sam_model_registry["vit_b"](checkpoint="./checkpoints/sam_vit_b_01ec64.pth").cuda()
+        predictor = SamPredictor(sam)
     elif args.model_name=="MedSAM_bbox":
         from SAM.segment_anything import sam_model_registry,SamPredictor
         sam = sam_model_registry["vit_b"](checkpoint="./checkpoints/medsam_vit_b.pth").cuda()
