@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_图层_1" data-name="图层 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 179.07 176.94">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: url(#_未命名的渐变_24-3);
+      }
+
+      .cls-2 {
+        fill: url(#_未命名的渐变_24-2);
+      }
+
+      .cls-3 {
+        fill: url(#_未命名的渐变_24);
+      }
+    </style>
+    <linearGradient id="_未命名的渐变_24" data-name="未命名的渐变 24" x1="47.96" y1="-109.58" x2="142.85" y2="151.13" gradientTransform="translate(85.65 28.41) rotate(30.2) scale(.76 .56)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#6989a5"/>
+      <stop offset=".21" stop-color="#6c8aa5"/>
+      <stop offset=".38" stop-color="#768fa8"/>
+      <stop offset=".54" stop-color="#8797ae"/>
+      <stop offset=".69" stop-color="#9fa3b5"/>
+      <stop offset=".83" stop-color="#beb1be"/>
+      <stop offset=".97" stop-color="#e4c3c9"/>
+      <stop offset="1" stop-color="#edc8cc"/>
+    </linearGradient>
+    <linearGradient id="_未命名的渐变_24-2" data-name="未命名的渐变 24" x1="-280.37" y1="429.28" x2="-183.01" y2="696.76" gradientTransform="translate(-126.2 1.52) rotate(-88) scale(.68 .35)" xlink:href="#_未命名的渐变_24"/>
+    <linearGradient id="_未命名的渐变_24-3" data-name="未命名的渐变 24" x1="22.38" y1="30.01" x2="70.83" y2="163.13" gradientTransform="translate(-42.37 65.58) rotate(-41.13)" xlink:href="#_未命名的渐变_24"/>
+  </defs>
+  <path class="cls-3" d="M171.98,46.02s17.02-27.07-1.72-46.02l-60.82,111.35s-9.09,22.11,5.66,38.81l56.88-104.14Z"/>
+  <path class="cls-2" d="M37.64,156.37s-20.27-1.64-25.48,20.57l80.67-.27s15.15-2.33,20.26-20.55l-75.44,.25Z"/>
+  <path class="cls-1" d="M40.27,74.16S22.18,51.89,0,62.99l77.26,83.56s16.27,14,35.27,5.76L40.27,74.16Z"/>
+</svg>

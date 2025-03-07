@@ -115,26 +115,7 @@ def predict_with_prompt(args, logger, directory=None,parts=None):
                     input_bbox = np.array([[x1, y1, x2, y2]])
                     pred_raw, _, _ = predictor.predict(box=input_bbox, multimask_output=False, return_logits=True)
                     pred = torch.from_numpy(pred_raw).sigmoid().permute(1, 2, 0).numpy().astype(np.float32)  # [0~1]  ndarray
-                    # if args.dice_percent <1  or args.calc_raw_dice :
-                    #     raw_merge+= pred
-                    # ########################################################
-                    # if args.noise >0 and args.noise_type=="dilation":
-                    #     print("add noise")
-                    #     kernel_size = int(min(y2 - y1, x2 - x1) * args.noise)
-                    #     kernel = np.ones((kernel_size, kernel_size), np.uint8)
-                    #     noise_mask = cv2.dilate(mask[y1:y2, x1:x2], kernel, iterations=1)
-                    #     crop_mask_queue.append(noise_mask[:,:,None])
 
-                    #     noise_sample_merged=np.concatenate([mask[y1:y2, x1:x2,0], noise_mask], axis=1)
-                    #     cv2.imwrite(os.path.join(noise_path, sample_name), noise_sample_merged*255)
-                    # else:
-                    #     crop_mask_queue.append(mask[y1:y2, x1:x2])
-                    # crop_image_queue.append(image[y1:y2, x1:x2])
-                    # crop_bbox_queue.append([x1, y1, x2, y2])
-                    # crop_predict_sigmoid_queue.append(pred[y1:y2, x1:x2])
-                    # crop_predict_logist_queue.append(torch.from_numpy(pred_raw).permute(1, 2, 0).numpy().astype(np.float32)[y1:y2, x1:x2])
-                    # pred_mask = (pred > 0.5).astype(np.float32)
-                    # crop_predict_queue.append(pred_mask[y1:y2, x1:x2])
                 else:
                     input_point = np.array([centroids[i]])
                     input_label = np.array([1])
@@ -157,13 +138,6 @@ def predict_with_prompt(args, logger, directory=None,parts=None):
 
 
 
-                    # crop_mask_queue.append(mask[y1:y2, x1:x2])
-                    # crop_image_queue.append(image[y1:y2, x1:x2])
-                    # crop_bbox_queue.append([x1, y1, x2, y2])
-                    # crop_predict_sigmoid_queue.append(pred[y1:y2, x1:x2])
-                    # crop_predict_logist_queue.append(torch.from_numpy(pred_raw).permute(1, 2, 0).numpy().astype(np.float32)[y1:y2, x1:x2])
-                    # pred_mask = (pred > 0.5).astype(np.float32)
-                    # crop_predict_queue.append(pred_mask[y1:y2, x1:x2])
 
                 if args.dice_percent < 1 or args.calc_raw_dice:
                     raw_merge += pred
@@ -236,11 +210,7 @@ def predict_with_prompt(args, logger, directory=None,parts=None):
 
                 optimizer.zero_grad()
                 if  args.four_channel:
-                    # trans = transforms.Compose([transforms.ToPILImage(),
-                    #                             transforms.Resize((args.crop_image_size, args.crop_image_size)),
-                    #                             transforms.ToTensor(),
-                    #                             transforms.Normalize([0, 0, 0,0.5], [1,1,1,1])
-                    #                             ])
+
                     trans = transforms.Compose([transforms.ToPILImage(),
                                                 transforms.Resize((args.crop_image_size, args.crop_image_size)),
                                                 transforms.ToTensor()
@@ -357,10 +327,7 @@ def predict_with_prompt(args, logger, directory=None,parts=None):
             for i in range(len(crop_image_queue)):
                 x1, y1, x2, y2 = crop_bbox_queue[i]
                 pre_merge[y1:y2, x1:x2, :] = pre_merge[y1:y2, x1:x2, :] + binary(crop_merge_queue[i])
-                # pre_merge[y1:y2, x1:x2, :] = pre_merge[y1:y2, x1:x2, :] + crop_merge_queue[i]
-                # pre_count[y1:y2, x1:x2,:] += 1
-            # pre_count[pre_count == 0] = 1
-            # pre_merge=pre_merge/pre_count
+
             pre_merge=binary(pre_merge)
 
             final_dice=calc_dice(pre_merge[:,:,0],mask[:,:,0])
