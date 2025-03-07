@@ -6,98 +6,175 @@
 [//]: # (<img src="./source/logo.svg" width="200px" height="200px">)
 <img src="source/logo.png">
 <img src="source/fig2.png">
-<style>
-.center-text {
-    text-align: center;
-    font-size:50px;
-    font-weight: bold;
-}
-.container{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
-}
-.container2{
-    margin-top:30px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-}
 
-.con2{
-    margin:30px;
-    display: flex;
-    flex-direction: column;
-    align-items: left;
-    justify-content: space-around;
-}
+[//]: # (<style>)
 
+[//]: # (.center-text {)
 
-.item{
-    width:150px;
-    height:30px;
-    align-items:center;
-    justify-content:center;
-    background-color:#0c0c0c;
-    border-radius:20px;
-    text-align:center;
-    font-size:18px;
-    font-weight:bold;
-    display:flex;
+[//]: # (    text-align: center;)
 
+[//]: # (    font-size:50px;)
 
-margin:0 10px;
-}
+[//]: # (    font-weight: bold;)
 
-.image{
-    background-color: #f3f0f0;
-    width:110px;
-    height:110px;
-    border-radius: 55px;
-    padding: 10px;
-    font-weight: bold;
-    color:white;
-    
-}
-.container2 a{
-    color:white;
-    margin-left:10px;
-}
-.image2{
-    margin-top:60px;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-}
+[//]: # (})
 
+[//]: # (.container{)
 
-.checkpoints{
- display: flex;
- justify-content: left;
- flex-direction:row;
- align-items: center;
+[//]: # (    display: flex;)
 
+[//]: # (    justify-content: center;)
 
-}
+[//]: # (    align-items: center;)
 
-.item_2{
- width:180px;
- height:20px;
- background-color:#f6f5f5;
- /*color:white;*/
- border-radius: 20px;
- margin:10px 10px;
-text-align:center;
-font-size:12px;
-}
-.item_2 a{
-  
-}
+[//]: # (    )
+[//]: # (})
 
-</style>
+[//]: # (.container2{)
+
+[//]: # (    margin-top:30px;)
+
+[//]: # (    display: flex;)
+
+[//]: # (    flex-direction: row;)
+
+[//]: # (    align-items: center;)
+
+[//]: # (    justify-content: center;)
+
+[//]: # (})
+
+[//]: # ()
+[//]: # (.con2{)
+
+[//]: # (    margin:30px;)
+
+[//]: # (    display: flex;)
+
+[//]: # (    flex-direction: column;)
+
+[//]: # (    align-items: left;)
+
+[//]: # (    justify-content: space-around;)
+
+[//]: # (})
+
+[//]: # ()
+[//]: # ()
+[//]: # (.item{)
+
+[//]: # (    width:150px;)
+
+[//]: # (    height:30px;)
+
+[//]: # (    align-items:center;)
+
+[//]: # (    justify-content:center;)
+
+[//]: # (    background-color:#0c0c0c;)
+
+[//]: # (    border-radius:20px;)
+
+[//]: # (    text-align:center;)
+
+[//]: # (    font-size:18px;)
+
+[//]: # (    font-weight:bold;)
+
+[//]: # (    display:flex;)
+
+[//]: # ()
+[//]: # ()
+[//]: # (margin:0 10px;)
+
+[//]: # (})
+
+[//]: # ()
+[//]: # (.image{)
+
+[//]: # (    background-color: #f3f0f0;)
+
+[//]: # (    width:110px;)
+
+[//]: # (    height:110px;)
+
+[//]: # (    border-radius: 55px;)
+
+[//]: # (    padding: 10px;)
+
+[//]: # (    font-weight: bold;)
+
+[//]: # (    color:white;)
+
+[//]: # (    )
+[//]: # (})
+
+[//]: # (.container2 a{)
+
+[//]: # (    color:white;)
+
+[//]: # (    margin-left:10px;)
+
+[//]: # (})
+
+[//]: # (.image2{)
+
+[//]: # (    margin-top:60px;)
+
+[//]: # (    display: flex;)
+
+[//]: # (    flex-direction: row;)
+
+[//]: # (    justify-content: center;)
+
+[//]: # (    align-items: center;)
+
+[//]: # (})
+
+[//]: # ()
+[//]: # ()
+[//]: # (.checkpoints{)
+
+[//]: # ( display: flex;)
+
+[//]: # ( justify-content: left;)
+
+[//]: # ( flex-direction:row;)
+
+[//]: # ( align-items: center;)
+
+[//]: # ()
+[//]: # ()
+[//]: # (})
+
+[//]: # ()
+[//]: # (.item_2{)
+
+[//]: # ( width:180px;)
+
+[//]: # ( height:20px;)
+
+[//]: # ( background-color:#f6f5f5;)
+
+[//]: # ( /*color:white;*/)
+
+[//]: # ( border-radius: 20px;)
+
+[//]: # ( margin:10px 10px;)
+
+[//]: # (text-align:center;)
+
+[//]: # (font-size:12px;)
+
+[//]: # (})
+
+[//]: # (.item_2 a{)
+
+[//]: # (  )
+[//]: # (})
+
+[//]: # ()
+[//]: # (</style>)
 
 
 
