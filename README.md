@@ -1,10 +1,11 @@
 
 [![Python 3.9.7](https://img.shields.io/badge/python-3.9.7-blue.svg)](https://www.python.org/downloads/release/python-360/)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Arxiv](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 <img src="https://img.shields.io/badge/PyTorch-EE4C2C?style=flat-square&logo=Pytorch&logoColor=white"/>
 
 [//]: # (<img src="./source/logo.svg" width="200px" height="200px">)
-
+<img src="source/logo.png">
+<img src="source/fig2.png">
 <style>
 .center-text {
     text-align: center;
@@ -102,34 +103,49 @@ font-size:12px;
 
 
 
-<div class="container">
-<div class="image">
-    <img src="source/logo.svg" width="80px" height="80px" >
-</div>
-</div>
+[//]: # (<div class="container">)
+
+[//]: # (<div class="image">)
+
+[//]: # (    <img src="source/logo.svg" width="80px" height="80px" >)
+
+[//]: # (</div>)
+
+[//]: # (</div>)
 
 
 
 [//]: # (<p style="text-align: center;font-size: 50px"><b>AuxOL</b></p>)
 
-<div class="center-text">AuxOL</div>
-<div class="center-text" style="font-size: 20px">On-the-Fly Improving Segment Anything
-for Medical Image Segmentation using Auxiliary Online Learning</div>
-<div class="container2">
- <div class="item"><img src="source/homepage_fill.svg" width="20px" height="20px"><a href="https://sam-auxol.github.io/AuxOL/">Page</a></div>
-    <div class="item"><img src="source/arxiv.svg" width="20px" height="20px"><a href="https://arxiv.org/abs/2406.00956">Arxiv</a></div>
-    <div class="item"><img src="source/IEEE_logo.svg" width="20px" height="20px"><a href="https://arxiv.org/abs/2406.00956">IEEE</a></div>
-</div>
+[//]: # (<div class="center-text">AuxOL</div>)
 
-<div class="center-text" style="font-size: 30px;margin-top:40px">Overview</div>
-<div class="image2">
-<img src="./source/fig2.png" width="90%">
-</div>
+[//]: # (<div class="center-text" style="font-size: 20px">On-the-Fly Improving Segment Anything)
+
+[//]: # (for Medical Image Segmentation using Auxiliary Online Learning</div>)
+
+[//]: # (<div class="container2">)
+
+[//]: # ( <div class="item"><img src="source/homepage_fill.svg" width="20px" height="20px"><a href="https://sam-auxol.github.io/AuxOL/"></a></div>)
+
+[//]: # (    <div class="item"><img src="source/arxiv.svg" width="20px" height="20px"><a href="https://arxiv.org/abs/2406.00956">Arxiv</a></div>)
+
+[//]: # (    <div class="item"><img src="source/IEEE_logo.svg" width="20px" height="20px"><a href="https://arxiv.org/abs/2406.00956">IEEE</a></div>)
+
+[//]: # (</div>)
+
+[//]: # ()
+[//]: # (<div class="center-text" style="font-size: 30px;margin-top:40px">Overview</div>)
+
+[//]: # (<div class="image2">)
+
+[//]: # (<img src="./source/fig2.png" width="90%">)
+
+[//]: # (</div>)
 
 
+# How to Start ?
 
-
-<div class="center-text" style="font-size: 30px;margin-top:40px">How to Start?</div>
+[//]: # (<div class="center-text" style="font-size: 30px;margin-top:40px">How to Start?</div>)
 
 
 ### Step1 Datasets
@@ -168,13 +184,13 @@ If you only want to run all experiments, execute the following command.
 ./run.sh
 ```
 
-<div class="center-text" style="font-size: 25px;margin-top:40px">License</div>
+### License
 
 
 The code is licensed under the <span style="color:red;font-weight:bold;margin-right:5px;">MIT</span>license.
 
 
-<div class="center-text" style="font-size: 25px;margin-top:20px">Citation  </div>
+### Citation  
 
 If you use AuxOL in your research, please use the following BibTeX entry.
 ```
