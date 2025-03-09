@@ -260,6 +260,8 @@ If you only want to run all experiments, execute the following command.
 ```
 ./run.sh
 ```
+### IEEE Paper
+[https://ieeexplore.ieee.org/document/10916782](https://ieeexplore.ieee.org/document/10916782)
 
 ### License
 
@@ -271,14 +273,14 @@ The code is licensed under the <span style="color:red;font-weight:bold;margin-ri
 
 If you use AuxOL in your research, please use the following BibTeX entry.
 ```
- @misc{huang2024improvingsegmentflyauxiliary,
-                title={Improving Segment Anything on the Fly:
-                Auxiliary Online Learning and Adaptive Fusion for Medical Image Segmentation},
-                author={Tianyu Huang and Tao Zhou and Weidi Xie and Shuo Wang and Qi Dou and Yizhe Zhang},
-                year={2024},
-                eprint={2406.00956},
-                archivePrefix={arXiv},
-                primaryClass={cs.CV},
-                url={https://arxiv.org/abs/2406.00956},
-          }
+@ARTICLE{10916782,
+author={Huang, Tianyu and Zhou, Tao and Xie, Weidi and Wang, Shuo and Dou, Qi and Zhang, Yizhe},
+journal={IEEE Transactions on Medical Imaging},
+title={On-the-Fly Improving Segment Anything for Medical Image Segmentation using Auxiliary Online Learning},
+year={2025},
+volume={},
+number={},
+pages={1-1},
+keywords={Image segmentation;Biomedical imaging;Adaptation models;Training;Computational modeling;Machine learning;Annotations;Three-dimensional displays;Foundation models;Data mining;Segment Anything Model;Online Machine Learning;Medical Image Segmentation;Auxiliary Online Learning;Rectified Annotations},
+doi={10.1109/TMI.2025.3548985}}
 ```
