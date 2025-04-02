@@ -4,7 +4,7 @@
 <img src="https://img.shields.io/badge/PyTorch-EE4C2C?style=flat-square&logo=Pytorch&logoColor=white"/>
 
 [//]: # (<img src="./source/logo.svg" width="200px" height="200px">)
-<img src="source/logo.png">
+<img src="source/logo.jpeg">
 <img src="source/fig2.png">
 
 [//]: # (<style>)
