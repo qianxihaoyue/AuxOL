@@ -260,7 +260,7 @@ If you only want to run all experiments, execute the following command.
 ```
 ./run.sh
 ```
-### IEEE Paper
+### IEEE-TMI Paper
 [https://ieeexplore.ieee.org/document/10916782](https://ieeexplore.ieee.org/document/10916782)
 
 ### License
